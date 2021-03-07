@@ -1,3 +1,6 @@
+#![allow(dead_code)]
+#![allow(unused)]
+
 extern crate image as img;
 mod graph;
 mod maze;
