@@ -91,8 +91,24 @@ impl Maze {
                         || bottom_option.is_none()
                         || left_option.is_none()
                     {
-                        let node_index = self.graph.add_node([x, y]);
-                        upper_neighbor_nodes[x as usize] = Some(node_index);
+                        if top_option.is_some() && top_option.unwrap() == false {
+                            let node_index = self.graph.add_node([x, y]);
+                            self.graph.set_bi_edge(
+                                upper_neighbor_nodes[x as usize].unwrap(),
+                                node_index,
+                                0,
+                            );
+                        } else if right_option.is_some() && right_option.unwrap() == false {
+                            let node_index = self.graph.add_node([x, y]);
+                            left_neighbor = Some(node_index);
+                        } else if bottom_option.is_some() && bottom_option.unwrap() == false {
+                            let node_index = self.graph.add_node([x, y]);
+                            upper_neighbor_nodes[x as usize] = Some(node_index);
+                        } else if left_option.is_some() && left_option.unwrap() == false {
+                            let node_index = self.graph.add_node([x, y]);
+                            self.graph
+                                .set_bi_edge(left_neighbor.unwrap(), node_index, 0);
+                        }
                     } else if top_option.is_some()
                         && right_option.is_some()
                         && bottom_option.is_some()
