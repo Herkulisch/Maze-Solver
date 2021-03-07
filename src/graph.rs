@@ -41,11 +41,11 @@ impl<T> Graph<T> {
     }
 
     pub fn get_edge(&self, from: usize, to: usize) -> Option<isize> {
-        self.edges[(to * self.nodes.len() + from)]
+        self.edges[(from * self.nodes.len() + to)]
     }
 
     pub fn set_mono_edge(&mut self, from: usize, to: usize, weight: isize) {
-        self.edges[(to * self.nodes.len() + from)] = Some(weight);
+        self.edges[(from * self.nodes.len() + to)] = Some(weight);
     }
 
     pub fn set_bi_edge(&mut self, from: usize, to: usize, weight: isize) {
