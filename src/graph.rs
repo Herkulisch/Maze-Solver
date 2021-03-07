@@ -12,7 +12,7 @@ impl<T> Graph<T> {
         }
     }
 
-    pub fn get_node(&self, index: usize) -> & Node<T> {
+    pub fn get_node(&self, index: usize) -> &Node<T> {
         &self.nodes[index]
     }
 
@@ -29,21 +29,25 @@ impl<T> Graph<T> {
             element: element,
             visited: false,
         });
-        let extension = self.nodes.len().pow(2) - (self.nodes.len() - 1).pow(2);
-        let mut vec: Vec<Option<isize>> = vec![None; self.edges.len() + extension];
+        let mut extension: Vec<Option<isize>> =
+            vec![None; self.nodes.len().pow(2) - (self.nodes.len() - 1).pow(2)];
         let old_row_length = self.nodes.len() - 1;
-        for i in (0..(vec.len() - extension)).rev() {
+        let extension_length = extension.len();
+        self.edges.append(&mut extension);
+        for i in (0..(self.edges.len() - extension_length)).rev() {
             let y = (i - (i % old_row_length)) / old_row_length;
-            vec[i + y] = self.edges[i];
+            self.edges[i + y] = self.edges[i];
+            if y > 0 {
+                self.edges[i] = None
+            }
         }
-        self.edges = vec;
         self.nodes.len() - 1
     }
 
-    pub fn get_neighbors(&self, from:usize)->Vec<usize>{
-        let mut vec:Vec<usize> = Vec::new();
-        for to in 0..self.nodes.len(){
-            if self.get_edge(from, to).is_some(){
+    pub fn get_neighbors(&self, from: usize) -> Vec<usize> {
+        let mut vec: Vec<usize> = Vec::new();
+        for to in 0..self.nodes.len() {
+            if self.get_edge(from, to).is_some() {
                 vec.push(to);
             }
         }
