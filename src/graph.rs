@@ -12,8 +12,8 @@ impl<T> Graph<T> {
         }
     }
 
-    pub fn get_node(&mut self, index: usize) -> &mut Node<T> {
-        &mut self.nodes[index]
+    pub fn get_node(&self, index: usize) -> & Node<T> {
+        &self.nodes[index]
     }
 
     pub fn get_node_amount(&self) -> usize {
