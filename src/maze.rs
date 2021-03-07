@@ -78,7 +78,7 @@ impl Maze {
         Err(MazeError::OutOfBounds)
     }
 
-    pub fn scan(&mut self) {
+    fn scan(&mut self) {
         let mut upper_neighbor_nodes: Vec<Option<usize>> = vec![None; self.size[0] as usize];
         let mut left_neighbor: Option<usize> = None;
         for y in 0..self.size[1] {
@@ -234,7 +234,7 @@ impl Maze {
         }
     }
 
-    pub fn find_exit(maze: Maze) -> Result<[u32; 2], MazeError> {
+    pub fn solve_maze(maze: &Maze) -> Result<[u32; 2], MazeError> {
         unimplemented!();
     }
 }
