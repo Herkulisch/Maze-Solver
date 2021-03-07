@@ -40,6 +40,16 @@ impl<T> Graph<T> {
         self.nodes.len() - 1
     }
 
+    pub fn get_neighbors(&self, from:usize)->Vec<usize>{
+        let mut vec:Vec<usize> = Vec::new();
+        for to in 0..self.nodes.len(){
+            if self.get_edge(from, to).is_some(){
+                vec.push(to);
+            }
+        }
+        vec
+    }
+
     pub fn get_edge(&self, from: usize, to: usize) -> Option<isize> {
         self.edges[(from * self.nodes.len() + to)]
     }
