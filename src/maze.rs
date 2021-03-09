@@ -254,7 +254,7 @@ impl Maze {
     pub fn solve_maze(maze: &Maze) -> Result<[u32; 2], MazeError> {
         unimplemented!();
     }
-    pub fn save_graph_as_image(&self) {
+    pub fn export_graph_png(&self) {
         let mut image = img::RgbImage::new(self.size[0], self.size[1]);
         for x in 0..self.size[0] {
             for y in 0..self.size[1] {
