@@ -1,5 +1,5 @@
 extern crate image as img;
-use crate::graph::Graph;
+use crate::graph::{Graph};
 use img::{Rgb, RgbImage};
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter, Result as fmtResult};
@@ -7,7 +7,7 @@ use std::path::Path;
 pub struct Maze {
     size: [u32; 2],
     maze: Vec<bool>,
-    graph: Graph<[u32; 2]>,
+    graph: Graph<([u32; 2], bool)>,
     entry: [u32; 2],
 }
 
@@ -38,7 +38,7 @@ impl Maze {
         Err(MazeError::OutOfBounds)
     }
 
-    pub fn get_graph(&self) -> &Graph<[u32; 2]> {
+    pub fn get_graph(&self) -> &Graph<([u32; 2], bool)> {
         &self.graph
     }
 
@@ -93,20 +93,20 @@ impl Maze {
                         || left_option.is_none()
                     {
                         if top_option.is_some() && top_option.unwrap() == false {
-                            let node_index = self.graph.add_node([x, y]);
+                            let node_index = self.graph.add_node(([x, y], true));
                             self.graph.set_bi_edge(
                                 upper_neighbor_nodes[x as usize].unwrap(),
                                 node_index,
                                 0,
                             );
                         } else if right_option.is_some() && right_option.unwrap() == false {
-                            let node_index = self.graph.add_node([x, y]);
+                            let node_index = self.graph.add_node(([x, y], true));
                             left_neighbor = Some(node_index);
                         } else if bottom_option.is_some() && bottom_option.unwrap() == false {
-                            let node_index = self.graph.add_node([x, y]);
+                            let node_index = self.graph.add_node(([x, y], true));
                             upper_neighbor_nodes[x as usize] = Some(node_index);
                         } else if left_option.is_some() && left_option.unwrap() == false {
-                            let node_index = self.graph.add_node([x, y]);
+                            let node_index = self.graph.add_node(([x, y], true));
                             self.graph
                                 .set_bi_edge(left_neighbor.unwrap(), node_index, 0);
                         }
@@ -124,7 +124,7 @@ impl Maze {
                         if top == false && right == false && bottom == false && left == false
                         //┼
                         {
-                            let node_index = self.graph.add_node([x, y]);
+                            let node_index = self.graph.add_node(([x, y], false));
                             self.graph
                                 .set_bi_edge(left_neighbor.unwrap(), node_index, 0);
                             self.graph.set_bi_edge(
@@ -137,7 +137,7 @@ impl Maze {
                         } else if top == false && right == false && bottom == true && left == false
                         //┴
                         {
-                            let node_index = self.graph.add_node([x, y]);
+                            let node_index = self.graph.add_node(([x, y], false));
                             self.graph
                                 .set_bi_edge(left_neighbor.unwrap(), node_index, 0);
                             self.graph.set_bi_edge(
@@ -150,7 +150,7 @@ impl Maze {
                         } else if top == true && right == false && bottom == false && left == false
                         //┬
                         {
-                            let node_index = self.graph.add_node([x, y]);
+                            let node_index = self.graph.add_node(([x, y], false));
                             self.graph
                                 .set_bi_edge(left_neighbor.unwrap(), node_index, 0);
                             left_neighbor = Some(node_index);
@@ -158,7 +158,7 @@ impl Maze {
                         } else if top == false && right == false && bottom == false && left == true
                         //├
                         {
-                            let node_index = self.graph.add_node([x, y]);
+                            let node_index = self.graph.add_node(([x, y], false));
                             self.graph.set_bi_edge(
                                 upper_neighbor_nodes[x as usize].unwrap(),
                                 node_index,
@@ -169,7 +169,7 @@ impl Maze {
                         } else if top == false && right == true && bottom == false && left == false
                         //¬├
                         {
-                            let node_index = self.graph.add_node([x, y]);
+                            let node_index = self.graph.add_node(([x, y], false));
                             self.graph
                                 .set_bi_edge(left_neighbor.unwrap(), node_index, 0);
                             self.graph.set_bi_edge(
@@ -182,13 +182,13 @@ impl Maze {
                         } else if top == true && right == false && bottom == false && left == true
                         //┌
                         {
-                            let node_index = self.graph.add_node([x, y]);
+                            let node_index = self.graph.add_node(([x, y], false));
                             upper_neighbor_nodes[x as usize] = Some(node_index);
                             left_neighbor = Some(node_index);
                         } else if top == true && right == true && bottom == false && left == false
                         //┐
                         {
-                            let node_index = self.graph.add_node([x, y]);
+                            let node_index = self.graph.add_node(([x, y], false));
                             self.graph
                                 .set_bi_edge(left_neighbor.unwrap(), node_index, 0);
                             upper_neighbor_nodes[x as usize] = Some(node_index);
@@ -196,7 +196,7 @@ impl Maze {
                         } else if top == false && right == true && bottom == true && left == false
                         //┘
                         {
-                            let node_index = self.graph.add_node([x, y]);
+                            let node_index = self.graph.add_node(([x, y], false));
                             self.graph
                                 .set_bi_edge(left_neighbor.unwrap(), node_index, 0);
                             self.graph.set_bi_edge(
@@ -209,7 +209,7 @@ impl Maze {
                         } else if top == false && right == false && bottom == true && left == true
                         //└
                         {
-                            let node_index = self.graph.add_node([x, y]);
+                            let node_index = self.graph.add_node(([x, y], false));
                             self.graph.set_bi_edge(
                                 upper_neighbor_nodes[x as usize].unwrap(),
                                 node_index,
@@ -220,7 +220,7 @@ impl Maze {
                         } else if top == false && right == true && bottom == true && left == true
                         //↓
                         {
-                            let node_index = self.graph.add_node([x, y]);
+                            let node_index = self.graph.add_node(([x, y], false));
                             self.graph.set_bi_edge(
                                 upper_neighbor_nodes[x as usize].unwrap(),
                                 node_index,
@@ -230,17 +230,17 @@ impl Maze {
                         } else if top == true && right == false && bottom == true && left == true
                         //←
                         {
-                            let node_index = self.graph.add_node([x, y]);
+                            let node_index = self.graph.add_node(([x, y], false));
                             left_neighbor = Some(node_index);
                         } else if top == true && right == true && bottom == false && left == true
                         //↑
                         {
-                            let node_index = self.graph.add_node([x, y]);
+                            let node_index = self.graph.add_node(([x, y], false));
                             upper_neighbor_nodes[x as usize] = Some(node_index);
                         } else if top == true && right == true && bottom == true && left == false
                         //→
                         {
-                            let node_index = self.graph.add_node([x, y]);
+                            let node_index = self.graph.add_node(([x, y], false));
                             self.graph
                                 .set_bi_edge(left_neighbor.unwrap(), node_index, 0);
                             left_neighbor = None;
@@ -254,6 +254,7 @@ impl Maze {
     pub fn solve_maze(maze: &Maze) -> Result<[u32; 2], MazeError> {
         unimplemented!();
     }
+
     pub fn export_graph_png(&self) {
         let mut image = img::RgbImage::new(self.size[0], self.size[1]);
         for x in 0..self.size[0] {
@@ -266,7 +267,7 @@ impl Maze {
             }
         }
         for node_index in 0..self.graph.get_node_amount() {
-            let tile = self.graph.get_node(node_index).element;
+            let (tile, _) = self.graph.get_node(node_index).element;
             image.put_pixel(tile[0], tile[1], Rgb([255, 160, 122]));
         }
         let path = "./assets/maze_with_nodes.png";
