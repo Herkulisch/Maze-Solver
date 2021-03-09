@@ -1,8 +1,9 @@
 extern crate image as img;
 use crate::graph::Graph;
-use img::RgbImage;
+use img::{Rgb, RgbImage};
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter, Result as fmtResult};
+use std::path::Path;
 pub struct Maze {
     size: [u32; 2],
     maze: Vec<bool>,
@@ -252,6 +253,25 @@ impl Maze {
 
     pub fn solve_maze(maze: &Maze) -> Result<[u32; 2], MazeError> {
         unimplemented!();
+    }
+    pub fn save_graph_as_image(&self) {
+        let mut image = img::RgbImage::new(self.size[0], self.size[1]);
+        for x in 0..self.size[0] {
+            for y in 0..self.size[1] {
+                if self.get_tile(x, y).unwrap() == true {
+                    image.put_pixel(x, y, Rgb([0, 0, 0]));
+                } else {
+                    image.put_pixel(x, y, Rgb([255, 255, 255]));
+                }
+            }
+        }
+        for node_index in 0..self.graph.get_node_amount() {
+            let tile = self.graph.get_node(node_index).element;
+            image.put_pixel(tile[0], tile[1], Rgb([255, 160, 122]));
+        }
+        let path = "./assets/maze_with_nodes.png";
+        image.save(path);
+        println!("Bild wurde in {} gespeichert.", path);
     }
 }
 
