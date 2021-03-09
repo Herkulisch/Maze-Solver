@@ -1,9 +1,9 @@
 extern crate image as img;
 use crate::graph::{Graph};
 use img::{Rgb, RgbImage};
+use std::collections::VecDeque;
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter, Result as fmtResult};
-use std::path::Path;
 pub struct Maze {
     size: [u32; 2],
     maze: Vec<bool>,
@@ -251,8 +251,36 @@ impl Maze {
         }
     }
 
-    pub fn solve_maze(maze: &Maze) -> Result<[u32; 2], MazeError> {
-        unimplemented!();
+    pub fn solve_maze(maze: &Maze) -> Option<[u32; 2]> {
+        Self::bfs(maze.get_graph(), 0)
+    }
+
+    fn bfs(graph: &Graph<([u32; 2], bool)>, start_node_index: usize) -> Option<[u32; 2]> {
+        let mut queue: VecDeque<usize> = VecDeque::new();
+        let mut visited: Vec<usize> = Vec::new();
+        let mut exit_node: Option<[u32; 2]> = None;
+        queue.push_back(start_node_index);
+        visited.push(start_node_index);
+        let mut skipped_first = false;
+        while !queue.is_empty() {
+            let node_index = queue.pop_front().unwrap();
+            if graph.get_node(node_index).element.1 == true {
+                if skipped_first {
+                    exit_node = Some(graph.get_node(node_index).element.0);
+                    break;
+                }
+                else{
+                    skipped_first = true;
+                }
+            }
+            for child_index in graph.get_neighbors(node_index) {
+                if !visited.contains(&child_index) {
+                    queue.push_back(child_index);
+                    visited.push(child_index);
+                }
+            }
+        }
+        return exit_node;
     }
 
     pub fn export_graph_png(&self) {
