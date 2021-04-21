@@ -1,5 +1,5 @@
 extern crate image as img;
-use crate::graph::{Graph};
+use crate::graph::Graph;
 use img::{Rgb, RgbImage};
 use std::collections::VecDeque;
 use std::error::Error;
@@ -268,8 +268,7 @@ impl Maze {
                 if skipped_first {
                     exit_node = Some(graph.get_node(node_index).element.0);
                     break;
-                }
-                else{
+                } else {
                     skipped_first = true;
                 }
             }
@@ -283,7 +282,14 @@ impl Maze {
         return exit_node;
     }
 
-    pub fn export_graph_png(&self) {
+    fn dfs(graph: &Graph<([u32; 2], bool)>, start_node_index: usize) -> Option<[u32; 2]> {
+        let node_length = graph.get_node_amount();
+        let mut color: Vec<char> = vec!['w'; node_length];
+        let mut pi: Vec<Option<usize>> = vec![None; node_length];
+        unimplemented!();
+    }
+
+    pub fn export_graph_png(&self, path: String) {
         let mut image = img::RgbImage::new(self.size[0], self.size[1]);
         for x in 0..self.size[0] {
             for y in 0..self.size[1] {
@@ -298,8 +304,7 @@ impl Maze {
             let (tile, _) = self.graph.get_node(node_index).element;
             image.put_pixel(tile[0], tile[1], Rgb([255, 160, 122]));
         }
-        let path = "./assets/maze_with_nodes.png";
-        image.save(path);
+        image.save(&path).unwrap();
         println!("Bild wurde in {} gespeichert.", path);
     }
 }
