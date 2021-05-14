@@ -2,13 +2,24 @@ use std::fmt::{Debug, Display, Formatter, Result as fmtResult};
 pub struct Graph<T> {
     nodes: Vec<Node<T>>,
     edges: Vec<Option<isize>>,
+    buf_len: usize,
 }
 
 impl<T> Graph<T> {
     pub fn new() -> Graph<T> {
+        let buf_len = 1000;
         Graph {
             nodes: Vec::new(),
-            edges: Vec::new(),
+            edges: vec![None; buf_len * buf_len],
+            buf_len: buf_len,
+        }
+    }
+
+    pub fn new_pre_length(buf_len: usize) -> Graph<T> {
+        Graph {
+            nodes: Vec::new(),
+            edges: vec![None; buf_len * buf_len],
+            buf_len: buf_len,
         }
     }
 
@@ -29,17 +40,21 @@ impl<T> Graph<T> {
             element: element,
             visited: false,
         });
-        let mut extension: Vec<Option<isize>> =
-            vec![None; self.nodes.len().pow(2) - (self.nodes.len() - 1).pow(2)];
-        let old_row_length = self.nodes.len() - 1;
-        let extension_length = extension.len();
-        self.edges.append(&mut extension);
-        for i in (0..(self.edges.len() - extension_length)).rev() {
-            let y = (i - (i % old_row_length)) / old_row_length;
-            self.edges[i + y] = self.edges[i];
-            if y > 0 {
-                self.edges[i] = None
+        if self.nodes.len() % self.buf_len == 0 && self.nodes.len() > 0 {
+            let extension_length =
+                (self.nodes.len() + self.buf_len).pow(2) - (self.nodes.len()).pow(2);
+
+            let mut extension: Vec<Option<isize>> = vec![None; extension_length];
+            let old_row_length = self.nodes.len() - 1;
+            self.edges.append(&mut extension);
+            for i in (0..(self.edges.len() - extension_length)).rev() {
+                let y = (i - (i % old_row_length)) / old_row_length;
+                self.edges[i + y] = self.edges[i];
+                if y > 0 {
+                    self.edges[i] = None
+                }
             }
+            dbg!(self.edges.len());
         }
         self.nodes.len() - 1
     }
